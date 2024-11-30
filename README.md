@@ -1,15 +1,22 @@
-# Portfolio of Hachem Rifaii
-<img src ="./src/assets/myPortfilio.png" />
- 
-This project was created with CRA (Create React App)
+# 🚀 Portfolio of Hachem Rifaii  
+🌐 **Live Demo**: [hachem-rifaii.vercel.app](https://hachem-rifaii.vercel.app/)  
 
-This is my portfolio website to introduce myself, here I put my skills, projects, and contact details.
+![Portfolio Preview](./src/assets/myPortfilio.png)  
 
-## Technologies used:
-- React
-- Typescript
-- Styled Components
- 
-## To run this project:
-- yarn install
-- yarn run start
+Welcome to my personal portfolio! 🎉 This website showcases my journey as a developer, highlighting my **skills**, **projects**, and **contact details** in an elegant and interactive way.
+
+---
+
+## 🛠️ Technologies Used  
+- ⚛️ **React** – For building a dynamic user interface.  
+- 🟦 **Typescript** – Ensures type safety for robust development.  
+- 🎨 **Styled Components** – For writing maintainable, scoped CSS directly in JavaScript.  
+
+---
+
+## 📦 Getting Started  
+
+Follow these steps to run the project locally:  
+1. **Install dependencies**:  
+   ```bash
+   yarn install
