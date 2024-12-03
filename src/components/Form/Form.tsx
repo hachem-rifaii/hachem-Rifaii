@@ -1,70 +1,88 @@
-import { Container, ContainerSucces } from './styles'
-import { useForm, ValidationError } from '@formspree/react'
-import { toast, ToastContainer } from 'react-toastify'
-import ReCAPTCHA from 'react-google-recaptcha'
-import { useEffect, useState } from 'react'
-import validator from 'validator'
+import React, { useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
+import { Container } from "./styles";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify styles
+import { useForm, ValidationError } from "@formspree/react";
+import validator from "validator";
+import process from "process";
 
-export function Form() {
-  const [state, handleSubmit] = useForm('xknkpqry')
-  const [validEmail, setValidEmail] = useState(false)
-  const [isHuman, setIsHuman] = useState(false)
-  const [message, setMessage] = useState('')
+export const Form = () => {
+  const form = useRef<HTMLFormElement>(null);
+  const [state, handleSubmit] = useForm("xknkpqry");
+  const [validEmail, setValidEmail] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Verify email using validator.js
   function verifyEmail(email: string) {
     if (validator.isEmail(email)) {
-      setValidEmail(true)
+      setValidEmail(true);
     } else {
-      setValidEmail(false)
+      setValidEmail(false);
     }
   }
-  useEffect(() => {
-    if (state.succeeded) {
-      toast.success('Email successfully sent!', {
+
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!form.current) {
+      toast.error("Form is not available!", {
         position: toast.POSITION.BOTTOM_LEFT,
         pauseOnFocusLoss: false,
         closeOnClick: true,
-        hideProgressBar: false,
-        toastId: 'succeeded',
-      })
+      });
+      return;
     }
-  })
-  if (state.succeeded) {
-    return (
-      <ContainerSucces>
-        <h3>Thanks for getting in touch!</h3>
-        <button
-          onClick={() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }}
-        >
-          Back to the top
-        </button>
-        <ToastContainer />
-      </ContainerSucces>
-    )
-  }
+
+    emailjs
+      .sendForm(
+        process.env.REACT_APP_EMAILJS_SERVICE_ID!,
+        process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
+        form.current!,
+        process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
+      )
+      .then(
+        () => {
+          toast.success("Email successfully sent!", {
+            position: toast.POSITION.BOTTOM_LEFT,
+            pauseOnFocusLoss: false,
+            closeOnClick: true,
+            hideProgressBar: false,
+            toastId: "success",
+          });
+          form.current?.reset();
+        },
+        (error) => {
+          console.error("FAILED...", error.text);
+          toast.error("Failed to send email. Please try again!", {
+            position: toast.POSITION.BOTTOM_LEFT,
+            pauseOnFocusLoss: false,
+            closeOnClick: true,
+          });
+        }
+      );
+  };
+
   return (
     <Container>
       <h2>Get in touch using the form</h2>
-      <form onSubmit={handleSubmit}>
+      <form ref={form} onSubmit={sendEmail}>
+        <input type="text" name="name" placeholder="Your Name" required />
         <input
-          placeholder="Email"
-          id="email"
           type="email"
           name="email"
-          onChange={(e) => {
-            verifyEmail(e.target.value)
-          }}
+          placeholder="Your Email"
           required
+          onChange={(e) => verifyEmail(e.target.value)}
         />
         <ValidationError prefix="Email" field="email" errors={state.errors} />
         <textarea
-          required
-          placeholder="Send a message to get started."
-          id="message"
           name="message"
+          placeholder="Your Message"
+          required
+          id="message"
           onChange={(e) => {
-            setMessage(e.target.value)
+            setMessage(e.target.value);
           }}
         />
         <ValidationError
@@ -72,20 +90,13 @@ export function Form() {
           field="message"
           errors={state.errors}
         />
-        <ReCAPTCHA
-          sitekey="6Lfj9NYfAAAAAP8wPLtzrsSZeACIcGgwuEIRvbSg"
-          onChange={(e) => {
-            setIsHuman(true)
-          }}
-        ></ReCAPTCHA>
         <button
           type="submit"
-          disabled={state.submitting || !validEmail || !message || !isHuman}
+          disabled={state.submitting || !validEmail || !message}
         >
-          Submit
+          Send
         </button>
       </form>
-      <ToastContainer />
     </Container>
-  )
-}
+  );
+};
