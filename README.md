@@ -1,5 +1,5 @@
 # 🚀 Portfolio of Hachem Rifaii  
-🌐 **Live Demo**: [hachem-rifaii.vercel.app](https://hachem-rifaii.vercel.app/)  
+🌐 **Live Demo**:
 
 ![Portfolio Preview](./src/assets/myPortfilio.png)  
 
